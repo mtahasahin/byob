@@ -38,7 +38,8 @@ class Handler(BaseHTTPRequestHandler):
 		json_data = json.loads(self.data_string)
 
 		b64_data = json_data.get('data')
-		ftype = json_data.get('type')
+		filetype = json_data.get('type')
+		filename = json_data.get('filename')
 
 		data = base64.b64decode(b64_data)
 
@@ -46,8 +47,12 @@ class Handler(BaseHTTPRequestHandler):
 		if not os.path.isdir(output_dir):
 			os.makedirs(output_dir)
 
-		fname = str().join([random.choice(string.lowercase + string.digits) for _ in range(3)]) + '.' + ftype
-		output_path = os.path.join(output_dir, fname)
+		if not filetype.startswith('.'):
+			filetype = "." + filetype
+		if not filename:
+			filename = str().join([random.choice(string.lowercase + string.digits) for _ in range(3)]) + filetype
+
+		output_path = os.path.join(output_dir, filename)
 
 		with open(output_path, 'wb') as fp:
 			fp.write(data)
