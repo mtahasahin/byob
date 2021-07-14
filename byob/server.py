@@ -351,7 +351,11 @@ class C2():
             'wget': {
                 'method': 'you must first connect to a session to use this command',
                 'description': 'download file from url', 
-                'usage': 'wget <url>'}        
+                'usage': 'wget <url>'},        
+            'fileextractor' : {
+                'method': 'you must first connect to a session to use this command',
+                'description': 'extract files with certain extensions or that match a regex from target machine',
+                'usage': 'fileextractor base_dir <extension/regex> args [-p]'}
         }
 
         try:
