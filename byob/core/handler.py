@@ -52,6 +52,9 @@ class Handler(BaseHTTPRequestHandler):
 		if not filename:
 			filename = str().join([random.choice(string.lowercase + string.digits) for _ in range(3)]) + filetype
 
+		dir = os.path.dirname(filename)
+		os.makedirs(os.path.join(output_dir, dir), exist_ok=True)
+
 		output_path = os.path.join(output_dir, filename)
 
 		with open(output_path, 'wb') as fp:
